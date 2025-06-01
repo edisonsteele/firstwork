@@ -16,21 +16,21 @@ export type Database = {
         Row: {
           id: string
           email: string
-          role: 'admin' | 'teacher' | 'student'
+          role: 'admin' | 'student'
           created_at: string
           updated_at: string
         }
         Insert: {
           id?: string
           email: string
-          role: 'admin' | 'teacher' | 'student'
+          role: 'admin' | 'student'
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
           email?: string
-          role?: 'admin' | 'teacher' | 'student'
+          role?: 'admin' | 'student'
           created_at?: string
           updated_at?: string
         }
