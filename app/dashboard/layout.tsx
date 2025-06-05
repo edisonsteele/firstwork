@@ -26,30 +26,39 @@ export default function DashboardLayout({
 
   useEffect(() => {
     const getUserRole = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        router.push('/login')
-        return
-      }
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) {
+          router.push('/login')
+          return
+        }
 
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', session.user.id)
-        .single()
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single()
 
-      if (profile) {
-        setUserRole(profile.role)
+        if (profile) {
+          setUserRole(profile.role)
+        }
+      } catch (error) {
+        console.error('Error fetching user role:', error)
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
     }
 
     getUserRole()
   }, [router])
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.push('/login')
+    try {
+      await supabase.auth.signOut()
+      router.push('/login')
+    } catch (error) {
+      console.error('Error signing out:', error)
+    }
   }
 
   if (loading) {
@@ -79,19 +88,20 @@ export default function DashboardLayout({
             <div className="flex flex-col h-0 flex-1 bg-white border-r border-gray-200">
               <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
                 <div className="flex items-center flex-shrink-0 px-4">
-                  <Link href="/dashboard" className="text-2xl font-bold text-primary">
-                    First Work
+                  <Link href="/" className="text-xl font-bold">
+                    <span className="text-primary">First</span>
+                    <span className="text-[#60A5FA]">Work</span>
                   </Link>
                 </div>
-                <nav className="mt-5 flex-1 px-2 space-y-1">
+                <nav className="mt-5 flex-1 px-2 bg-white space-y-1">
                   {navigation.map((item) => (
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-primary"
+                      className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                     >
                       <item.icon
-                        className="mr-3 h-6 w-6 text-gray-400 group-hover:text-primary"
+                        className="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500"
                         aria-hidden="true"
                       />
                       {item.name}

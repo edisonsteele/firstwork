@@ -18,13 +18,17 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
       if (error) throw error
-      router.push('/dashboard')
+
+      if (data?.session) {
+        router.push('/dashboard')
+        router.refresh()
+      }
     } catch (error) {
       setError(error instanceof Error ? error.message : 'An error occurred')
     } finally {
@@ -38,6 +42,10 @@ export default function LoginPage() {
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
       })
       if (error) throw error
